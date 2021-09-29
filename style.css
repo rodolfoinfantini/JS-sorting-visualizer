@@ -1,0 +1,41 @@
+
+.graph{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    transform: rotate(-90deg) scale(2);
+    transform-origin: top right;
+    gap: 0px;
+    pointer-events: none;
+    width: 150px;
+    padding-bottom: 100px;
+    padding-left: 100px;
+    margin-top: 400px;
+}
+
+.data{
+    background-color: transparent;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+}
+
+progress{
+    background-color: transparent;
+    height: 1px;
+    border: 0;
+    width: 100px;
+    /* transform: rotate(180deg); */
+}
+
+::-moz-progress-bar{
+    background-color: blue;
+}
+.red::-moz-progress-bar{
+    background-color: red;
+}
+.green::-moz-progress-bar{
+    background-color: green;
+}
