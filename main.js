@@ -7,36 +7,32 @@ const inputBarh = document.querySelector('input[name="barh"]')
 const inputDelay = document.querySelector('input[name="delay"]')
 const newArrayBtn = document.querySelector('button.newarray')
 const startBtn = document.querySelector('button.start')
+const type = document.querySelector('select[name="type"]')
+
 let bars = []
 
 let array = []
-
-let lastSorted = 0
 
 let comparisons = 0
 let arrayAccesses = 0
 
 let delay = parseInt(inputDelay.value)
-
 inputDelay.oninput = () => {
     if(!isNaN(inputDelay.value)) delay = parseInt(inputDelay.value)
 }
 
 let arraySize = parseInt(inputSize.value)
-
-let maxSize = parseInt(inputMax.value)
-
-inputMax.oninput = () => {
-    if(!isNaN(inputMax.value)) maxSize = parseInt(inputMax.value)
-}
-
 inputSize.oninput = () => {
     if(!isNaN(inputSize.value)) arraySize = inputSize.value
 }
 
+let maxSize = parseInt(inputMax.value)
+inputMax.oninput = () => {
+    if(!isNaN(inputMax.value)) maxSize = parseInt(inputMax.value)
+}
+
 let barHeight = parseInt(inputBarh.value)
 graph.style = `width: ${barHeight}px`
-
 inputBarh.oninput = () => {
     if(!isNaN(inputBarh.value)) {
         barHeight = parseInt(inputBarh.value)
@@ -47,29 +43,39 @@ inputBarh.oninput = () => {
     }
 }
 
-newArrayBtn.onclick = () => {
-    randomArray(arraySize)
-}
+newArrayBtn.onclick = randomArray
+startBtn.onclick = startSorting
 
-startBtn.onclick = () => {
-    startSorting()
-}
 
-function bringToFront(index){
-    let value = array[index]
-    for(let i = index; i > 0; i--){
-        arrayAccesses++
-        array[i] = array[i - 1]
-    }
-    array[0] = value
-    lastSorted++
-    arrayAccesses++
-}
-
+let startingTime
+let endingTime
 function startSorting(){
+    startingTime = new Date()
+    console.log(`Started: ${startingTime.getHours()}:${startingTime.getMinutes()}:${startingTime.getSeconds()}`)
     lastSorted = 0
     comparisons = 0
     arrayAccesses = 0
+    if(type.value == "my") myOwn()
+    else if(type.value == "bubble") bubble()
+    else if(type.value == "insertion") insertion()
+    else if(type.value == "bogo") bogo()
+    else if(type.value == "js") js()
+}
+
+function myOwn(){
+    let lastSorted = 0
+    
+    function bringToFront(index){
+        let value = array[index]
+        for(let i = index; i > 0; i--){
+            arrayAccesses++
+            array[i] = array[i - 1]
+        }
+        array[0] = value
+        lastSorted++
+        arrayAccesses++
+    }
+
     function loop(){
         let less = {value: array[lastSorted], index: lastSorted}
         for(let i = lastSorted; i < array.length; i++) {
@@ -83,8 +89,6 @@ function startSorting(){
         }
         bringToFront(less.index)
         updateBars()
-        clearColors()
-        setToGreen(lastSorted - 1)
         arrayAccesses++
         if(array.length > lastSorted) setTimeout(loop,delay)
         else finished()
@@ -92,11 +96,125 @@ function startSorting(){
     loop()
 }
 
+function bubble(){
+    let stop = true
+    function loop(){
+        let i = 0
+        function innerLoop(){
+            comparisons++
+            arrayAccesses++
+            if(array[i] > array[i + 1]){
+                array = swap(array, i, i + 1)
+                arrayAccesses++
+                stop = false
+                updateBars()
+            }
+            i++
+            if(i < array.length){
+                setTimeout(innerLoop,delay)
+            }else if(stop){
+                finished()
+                return
+            }else{
+                loop()
+            }
+        }
+        innerLoop()
+    }
+    loop()
+}
+
+function insertion(){
+    let i = 1
+    function loop(){
+        comparisons++
+        arrayAccesses++
+        if(array[i] <= array[i - 1]){
+            array = swap(array, i, i - 1)
+            arrayAccesses++
+            updateBars()
+            let innerI = i - 1
+            if(i == array.length){
+                finished()
+                return
+            }
+            i++
+            function innerLoop(){
+                comparisons++
+                arrayAccesses++
+                if(array[innerI] < array[innerI - 1]){
+                    arrayAccesses++
+                    array = swap(array, innerI, innerI - 1)
+                    updateBars()
+                    innerI--
+                    if(innerI > 0) setTimeout(innerLoop,delay)
+                    else loop()
+                }else{
+                    loop()
+                }
+            }
+            innerLoop()
+        }else{
+            if(i == array.length){
+                finished()
+                return
+            }
+            i++
+            loop()
+        }
+    }
+    loop()
+}
+
+function isSorted(){
+    let notSorted = false
+    for(let i = 0; i < array.length; i++){
+        arrayAccesses++
+        if(array[i] > array[i + 1]) {
+            arrayAccesses++
+            comparisons++
+            notSorted = true
+            break
+        }
+    }
+    return !notSorted
+}
+
+function bogo(){
+    function loop(){
+        if(isSorted()) {
+            finished()
+            return
+        }
+        for(let i = array.length - 1; i > 0; i--){
+            let random = Math.floor(Math.random() * (i + 1))
+            array = swap(array, i, random)
+        }
+        updateBars()
+        setTimeout(loop,delay)
+    }
+    loop()
+}
+
+function js(){
+    array = array.sort((a,b) => {
+        return a > b
+    })
+    updateBars()
+    finished()
+}
+
+
 
 function finished(){
-    console.log(array)
-    console.log(comparisons)
-    console.log(arrayAccesses)
+    endingTime = new Date()
+    console.log(`Finished: ${endingTime.getHours()}:${endingTime.getMinutes()}:${endingTime.getSeconds()}`)
+
+    let correctTime = new Date(null)
+    correctTime.setSeconds((endingTime - startingTime) / 1000)
+    console.log(`Elapsed: ${correctTime.toISOString().substr(11, 8)}`)
+    
+    console.log(isSorted(array))
 }
 
 function makeGraph(){
@@ -109,10 +227,6 @@ function makeGraph(){
         bars.push(newBar)
     }
     const highest = getHighestValue(array)
-    /* for(let i = bars.length - 1; i >= 0; i--){
-        bars[i].max = highest
-        graph.appendChild(bars[i])
-    } */
     for(let i = 0; i < bars.length; i++){
         bars[i].max = highest
         graph.appendChild(bars[i])
@@ -121,47 +235,31 @@ function makeGraph(){
 
 function getHighestValue(arr){
     let highest = arr[0]
-    for(let i = 1; i < arr.length; i++){
-        if(arr[i] > highest) highest = arr[i]
-    }
+    for(let i = 1; i < arr.length; i++) if(arr[i] > highest) highest = arr[i]
     return highest
 }
 
 function updateBars(){
-    for(let i =0; i < array.length; i++){
-        bars[i].value = array[i]
-        arrayAccesses++
-    }
+    for(let i =0; i < array.length; i++) bars[i].value = array[i]
     accessesH1.innerText = arrayAccesses
     comparisonsH1.innerText = comparisons
 }
 
-function clearColors(){
-    bars.forEach(e => {
-        e.className = ''
-    })
-}
-
-function setToRed(index){
-    bars[index].className = 'red'
-}
-
-function setToGreen(index){
-    bars[index].className = 'green'
+function swap(arr, i1, i2){
+    const temp = arr[i1]
+    arr[i1] = arr[i2]
+    arr[i2] = temp
+    return arr
 }
 
 makeGraph()
 
-
-
-function randomArray(size){
+function randomArray(){
     array = []
-    for(let i = 0; i < size; i++) {
-        array.push(Math.floor(Math.random() * maxSize))
-    }
+    for(let i = 0; i < arraySize; i++) array.push(Math.floor(Math.random() * maxSize))
     graph.innerHTML = ''
     bars = []
     makeGraph()
 }
 
-randomArray(arraySize)
+randomArray()
