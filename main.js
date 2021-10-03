@@ -51,6 +51,7 @@ let startingTime
 let endingTime
 function startSorting(){
     startingTime = new Date()
+    console.log(`------ ${type.value} ------`)
     console.log(`Started: ${startingTime.getHours()}:${startingTime.getMinutes()}:${startingTime.getSeconds()}`)
     lastSorted = 0
     comparisons = 0
@@ -89,6 +90,8 @@ function myOwn(){
         }
         bringToFront(less.index)
         updateBars()
+        clearColors()
+        setColor(less.index,'red')
         arrayAccesses++
         if(array.length > lastSorted) setTimeout(loop,delay)
         else finished()
@@ -98,8 +101,10 @@ function myOwn(){
 
 function bubble(){
     let stop = true
+    let loopI = 0
     function loop(){
         let i = 0
+        loopI++
         function innerLoop(){
             comparisons++
             arrayAccesses++
@@ -110,7 +115,9 @@ function bubble(){
                 updateBars()
             }
             i++
-            if(i < array.length){
+            clearColors()
+            setColor(i,'red')
+            if(i < array.length - loopI){
                 setTimeout(innerLoop,delay)
             }else if(stop){
                 finished()
@@ -119,10 +126,15 @@ function bubble(){
                 loop()
             }
         }
+        if(loopI >= array.length){
+            finished()
+            return
+        }
         innerLoop()
     }
     loop()
 }
+
 
 function insertion(){
     let i = 1
@@ -134,7 +146,7 @@ function insertion(){
             arrayAccesses++
             updateBars()
             let innerI = i - 1
-            if(i == array.length){
+            if(i >= array.length){
                 finished()
                 return
             }
@@ -147,6 +159,8 @@ function insertion(){
                     array = swap(array, innerI, innerI - 1)
                     updateBars()
                     innerI--
+                    clearColors()
+                    setColor(innerI,'red')
                     if(innerI > 0) setTimeout(innerLoop,delay)
                     else loop()
                 }else{
@@ -155,7 +169,7 @@ function insertion(){
             }
             innerLoop()
         }else{
-            if(i == array.length){
+            if(i >= array.length){
                 finished()
                 return
             }
@@ -213,8 +227,22 @@ function finished(){
     let correctTime = new Date(null)
     correctTime.setSeconds((endingTime - startingTime) / 1000)
     console.log(`Elapsed: ${correctTime.toISOString().substr(11, 8)}`)
-    
+
     console.log(isSorted(array))
+    console.log('------------')
+
+    clearColors()
+
+    let i = 0
+    function loop(){
+        setColor(i,'green')
+        i++
+        if(i < bars.length) setTimeout(loop, 0)
+        else{
+            clearColors()
+        }
+    }
+    loop()
 }
 
 function makeGraph(){
@@ -243,6 +271,14 @@ function updateBars(){
     for(let i =0; i < array.length; i++) bars[i].value = array[i]
     accessesH1.innerText = arrayAccesses
     comparisonsH1.innerText = comparisons
+}
+
+function clearColors(){
+    for(let i = 0; i < bars.length; i++) bars[i].className = ''
+}
+
+function setColor(i,color){
+    bars[i].classList.add(color)
 }
 
 function swap(arr, i1, i2){

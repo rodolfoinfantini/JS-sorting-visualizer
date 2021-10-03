@@ -1,4 +1,7 @@
-
+body{
+    background-color: black;
+    color: white;
+}
 .graph{
     display: flex;
     flex-direction: column;
@@ -31,11 +34,11 @@ progress{
 }
 
 ::-moz-progress-bar{
-    background-color: blue;
+    background-color: white;
 }
 .red::-moz-progress-bar{
     background-color: red;
 }
 .green::-moz-progress-bar{
-    background-color: green;
+    background-color: lime;
 }
