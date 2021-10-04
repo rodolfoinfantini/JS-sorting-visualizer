@@ -61,6 +61,8 @@ function startSorting(){
     else if(type.value == "insertion") insertion()
     else if(type.value == "bogo") bogo()
     else if(type.value == "js") js()
+    else if(type.value == "quick") quick()
+    else if(type.value == "merge") merge()
 }
 
 function myOwn(){
@@ -216,6 +218,56 @@ function js(){
     })
     updateBars()
     finished()
+}
+
+function quick(){
+    let stop = false
+    function loop(low, high){
+        if(stop) return
+        if(low < high){
+            let p = partition(low,high)
+            updateBars()
+            clearColors()
+            setColor(p,'red')
+            setTimeout(() => {
+                loop(low, p - 1)
+                loop(p + 1, high)
+            },delay)
+        }else if(isSorted(array)){
+            stop = true
+            finished()
+        }
+    }
+    function partition(low,high){
+        const pivot = array[high]
+        arrayAccesses++
+        let i = low - 1
+        for(let j = low; j < high; j++){
+            comparisons++
+            arrayAccesses++
+            if(array[j] <= pivot){
+                i++
+                arrayAccesses++
+                array = swap(array,i,j)
+            }
+        }
+        arrayAccesses++
+        array = swap(array,i + 1,high)
+        return i + 1
+    }
+    loop(0, array.length - 1)
+}
+
+function merge(){
+    function mergeSort(a){
+        let arrayOne = []
+        let arrayTwo = []
+    }
+
+
+
+
+    mergeSort(array)
 }
 
 
