@@ -13,6 +13,8 @@ let bars = []
 
 let array = []
 
+let colors = []
+
 let comparisons = 0
 let arrayAccesses = 0
 
@@ -49,138 +51,7 @@ startBtn.onclick = startSorting
 
 let startingTime
 let endingTime
-function startSorting(){
-    startingTime = new Date()
-    console.log(`------ ${type.value} ------`)
-    console.log(`Started: ${startingTime.getHours()}:${startingTime.getMinutes()}:${startingTime.getSeconds()}`)
-    lastSorted = 0
-    comparisons = 0
-    arrayAccesses = 0
-    if(type.value == "my") myOwn()
-    else if(type.value == "bubble") bubble()
-    else if(type.value == "insertion") insertion()
-    else if(type.value == "bogo") bogo()
-    else if(type.value == "js") js()
-    else if(type.value == "quick") quick()
-    else if(type.value == "merge") merge()
-}
 
-function myOwn(){
-    let lastSorted = 0
-    
-    function bringToFront(index){
-        let value = array[index]
-        for(let i = index; i > 0; i--){
-            arrayAccesses++
-            array[i] = array[i - 1]
-        }
-        array[0] = value
-        lastSorted++
-        arrayAccesses++
-    }
-
-    function loop(){
-        let less = {value: array[lastSorted], index: lastSorted}
-        for(let i = lastSorted; i < array.length; i++) {
-            if(array[i] > less.value){
-                less.value = array[i]
-                less.index = i
-                arrayAccesses++
-            }
-            comparisons++
-            arrayAccesses++
-        }
-        bringToFront(less.index)
-        updateBars()
-        clearColors()
-        setColor(less.index,'red')
-        arrayAccesses++
-        if(array.length > lastSorted) setTimeout(loop,delay)
-        else finished()
-    }
-    loop()
-}
-
-function bubble(){
-    let stop = true
-    let loopI = 0
-    function loop(){
-        let i = 0
-        loopI++
-        function innerLoop(){
-            comparisons++
-            arrayAccesses++
-            if(array[i] > array[i + 1]){
-                array = swap(array, i, i + 1)
-                arrayAccesses++
-                stop = false
-                updateBars()
-            }
-            i++
-            clearColors()
-            setColor(i,'red')
-            if(i < array.length - loopI){
-                setTimeout(innerLoop,delay)
-            }else if(stop){
-                finished()
-                return
-            }else{
-                loop()
-            }
-        }
-        if(loopI >= array.length){
-            finished()
-            return
-        }
-        innerLoop()
-    }
-    loop()
-}
-
-
-function insertion(){
-    let i = 1
-    function loop(){
-        comparisons++
-        arrayAccesses++
-        if(array[i] <= array[i - 1]){
-            array = swap(array, i, i - 1)
-            arrayAccesses++
-            updateBars()
-            let innerI = i - 1
-            if(i >= array.length){
-                finished()
-                return
-            }
-            i++
-            function innerLoop(){
-                comparisons++
-                arrayAccesses++
-                if(array[innerI] < array[innerI - 1]){
-                    arrayAccesses++
-                    array = swap(array, innerI, innerI - 1)
-                    updateBars()
-                    innerI--
-                    clearColors()
-                    setColor(innerI,'red')
-                    if(innerI > 0) setTimeout(innerLoop,delay)
-                    else loop()
-                }else{
-                    loop()
-                }
-            }
-            innerLoop()
-        }else{
-            if(i >= array.length){
-                finished()
-                return
-            }
-            i++
-            loop()
-        }
-    }
-    loop()
-}
 
 function isSorted(){
     let notSorted = false
@@ -196,120 +67,312 @@ function isSorted(){
     return !notSorted
 }
 
-function bogo(){
-    function loop(){
-        if(isSorted()) {
-            finished()
-            return
+
+function startSorting(){
+    if(finishAnim) clearInterval(finishAnim)
+    startingTime = new Date()
+    console.log(`------ ${type.value} ------`)
+    console.log(`Started: ${startingTime.getHours()}:${startingTime.getMinutes()}:${startingTime.getSeconds()}`)
+    lastSorted = 0
+    comparisons = 0
+    arrayAccesses = 0
+    if(type.value == "my") myOwn()
+    else if(type.value == "bubble") bubble()
+    else if(type.value == "insertion") insertion()
+    else if(type.value == "bogo") bogo()
+    else if(type.value == "js") js()
+    else if(type.value == "quick") quick()
+    else if(type.value == "oddeven") oddeven()
+    else if(type.value == "cocktail") cocktail()
+    else if(type.value == "comb") comb()
+}
+
+async function myOwn(){
+    let lastSorted = 0
+    
+    async function bringToFront(index){
+        await sleep(delay)
+        let value = array[index]
+        for(let i = index; i > 0; i--){
+            arrayAccesses++
+            array[i] = array[i - 1]
         }
-        for(let i = array.length - 1; i > 0; i--){
-            let random = Math.floor(Math.random() * (i + 1))
-            array = swap(array, i, random)
+        array[0] = value
+        lastSorted++
+        arrayAccesses++
+    }
+    while(array.length > lastSorted){
+        let less = {value: array[lastSorted], index: lastSorted}
+        for(let i = lastSorted; i < array.length; i++) {
+            if(array[i] > less.value){
+                less.value = array[i]
+                less.index = i
+                arrayAccesses++
+                clearColors()
+                setColor(i,'red')
+            }
+            comparisons++
+            arrayAccesses++
+        }
+        await bringToFront(less.index)
+        updateBars()
+        clearColors()
+        setColor(less.index,'red')
+        arrayAccesses++
+    }
+    finished()
+}
+
+async function bubble(){
+    arrayAccesses++
+    for(let loopI = 0; loopI < array.length; loopI++){
+        arrayAccesses++
+        for(let i = 0; i < array.length - loopI; i++){
+            comparisons++
+            arrayAccesses++
+            if(array[i] > array[i + 1]){
+                arrayAccesses++
+                noSleepSwap(array, i, i + 1)
+                arrayAccesses++
+            }
+        }
+        clearColors()
+        setColor((array.length - 1 - loopI),'red')
+        updateBars()
+        await sleep(delay)
+    }
+    finished()
+}
+
+
+async function insertion(){
+    arrayAccesses++
+    for(let i = 1; i < array.length; i++){
+        arrayAccesses++
+        comparisons++
+        if(array[i] <= array[i - 1]){
+            arrayAccesses++
+            noSleepSwap(array, i, i - 1)
+            arrayAccesses++
+            for(let innerI = i - 1; innerI > 0; innerI--){
+                comparisons++
+                arrayAccesses++
+                if(array[innerI] < array[innerI - 1]){
+                    arrayAccesses++
+                    noSleepSwap(array, innerI, innerI - 1)
+                    updateBars()
+                    clearColors()
+                    setColor(innerI,'red')
+                }
+            }
         }
         updateBars()
-        setTimeout(loop,delay)
+        await sleep(delay)
     }
-    loop()
+    finished()
+}
+
+async function bogo(){
+    while(!isSorted()){
+        arrayAccesses++
+        comparisons++
+        for(let i = array.length - 1; i > 0; i--){
+            arrayAccesses++
+            noSleepSwap(array, i, Math.floor(Math.random() * (i + 1)))
+        }
+        updateBars()
+        await sleep(delay)
+    }
+    finished()
 }
 
 function js(){
-    array = array.sort((a,b) => {
-        return a > b
-    })
-    updateBars()
+    arrayAccesses++
+    comparisons++
+    array = array.sort((a,b) => {return a > b})
     finished()
 }
 
 function quick(){
-    let stop = false
-    function loop(low, high){
-        if(stop) return
-        if(low < high){
-            let p = partition(low,high)
+    async function quickSort(arr,start,end){
+        if(start >= end){
             updateBars()
-            clearColors()
-            setColor(p,'red')
-            setTimeout(() => {
-                loop(low, p - 1)
-                loop(p + 1, high)
-            },delay)
-        }else if(isSorted(array)){
-            stop = true
-            finished()
+            if(isSorted()) finished()
+            return
         }
-    }
-    function partition(low,high){
-        const pivot = array[high]
         arrayAccesses++
-        let i = low - 1
-        for(let j = low; j < high; j++){
-            comparisons++
+        arrayAccesses++
+        arrayAccesses++
+        let index = await quickPartition(arr,start,end)
+        await Promise.all([
+            quickSort(arr,start,index - 1),
+            quickSort(arr,index + 1,end)
+        ])
+    }
+    async function quickPartition(arr,start,end){
+        arrayAccesses++
+        let pivotValue = arr[end]
+        let pivotIndex = start
+        for(let i = start; i < end; i++){
             arrayAccesses++
-            if(array[j] <= pivot){
-                i++
+            comparisons++
+            if(arr[i] < pivotValue){
                 arrayAccesses++
-                array = swap(array,i,j)
+                await swap(arr,i,pivotIndex)
+                updateBars()
+                clearColors()
+                setColor(i,'red')
+                pivotIndex++
             }
         }
         arrayAccesses++
-        array = swap(array,i + 1,high)
-        return i + 1
+        await swap(arr,pivotIndex,end)
+        return pivotIndex
     }
-    loop(0, array.length - 1)
+    quickSort(array,0,array.length - 1)
 }
 
-function merge(){
-    function mergeSort(a){
-        let arrayOne = []
-        let arrayTwo = []
+async function oddeven(){
+    let isSorted = false
+    while(!isSorted){
+        isSorted = true
+        arrayAccesses++
+        for(let i = 1; i < array.length; i = i + 2){
+            comparisons++
+            arrayAccesses++
+            if(array[i] > array[i + 1]){
+                arrayAccesses++
+                noSleepSwap(array,i,i+1)
+                isSorted = false
+                clearColors()
+                setColor(i + 1,'red')
+            }
+        }
+        await sleep(0)
+        arrayAccesses++
+        for(let i = 0; i < array.length; i = i + 2){
+            comparisons++
+            arrayAccesses++
+            if(array[i] > array[i + 1]){
+                arrayAccesses++
+                noSleepSwap(array,i,i+1)
+                isSorted = false
+                clearColors()
+                setColor(i,'red')
+            }
+        }
+        updateBars()
+        await sleep(delay)
     }
-
-
-
-
-    mergeSort(array)
+    finished()
 }
 
+async function cocktail(){
+    arrayAccesses++
+    for(let loopI = 0; loopI < array.length; loopI++){
+        let i = 0
+        arrayAccesses++
+        let backI = array.length - 1 - loopI
+        arrayAccesses++
+        for(i = 0; i < array.length - loopI; i++){
+            arrayAccesses++
+            comparisons++
+            if(array[i] > array[i + 1]){
+                arrayAccesses++
+                noSleepSwap(array, i, i + 1)
+                arrayAccesses++
+                clearColors()
+                setColor(i + 1,'red')
+            }
+        }
+        await sleep(0)
+        arrayAccesses++
+        for(backI = array.length - 1 - loopI; backI >= loopI; backI--){
+            arrayAccesses++
+            comparisons++
+            if(array[backI] < array[backI - 1]){
+                noSleepSwap(array, backI, backI - 1)
+                arrayAccesses++
+                clearColors()
+                setColor(backI - 1,'red')
+            }
+        }
+        updateBars()       
+        if(isSorted(array)) break
+        await sleep(delay)
+    }
+    finished()
+}
 
+async function comb(){
+    let gap = array.length
+    let swapped = true
+
+    while(gap > 1 || swapped){
+        gap = Math.max(Math.floor(gap / 1.3),1)
+        swapped = false
+        arrayAccesses++
+        for(let i = 0; i < array.length - gap; i++){
+            arrayAccesses++
+            comparisons++
+            if(array[i] > array[i + gap]){
+                arrayAccesses++
+                noSleepSwap(array,i,i + gap)
+                swapped = true
+            }
+            clearColors()
+            setColor(i,'red')
+        }
+        updateBars()
+        await sleep(delay)
+    }
+    finished()
+}
+
+let finishAnim
 
 function finished(){
+    if(finishAnim) clearInterval(finishAnim)
+    updateBars()
+    if(!isSorted(array)){
+        console.log("Not sorted!")
+        return
+    }
     endingTime = new Date()
     console.log(`Finished: ${endingTime.getHours()}:${endingTime.getMinutes()}:${endingTime.getSeconds()}`)
-
     let correctTime = new Date(null)
     correctTime.setSeconds((endingTime - startingTime) / 1000)
     console.log(`Elapsed: ${correctTime.toISOString().substr(11, 8)}`)
-
-    console.log(isSorted(array))
-    console.log('------------')
+    console.log('-----------------')
 
     clearColors()
 
     let i = 0
+    let sum = 5
     function loop(){
-        setColor(i,'green')
-        i++
-        if(i < bars.length) setTimeout(loop, 0)
-        else{
-            clearColors()
+        for(let j = 0; j < sum; j++){
+            if(!!bars[i + j]) setColor(i + j,'green')
+        }
+        i = i + sum
+        if(i > bars.length) {
+            clearInterval(finishAnim)
+            clearColorsGreen()
         }
     }
-    loop()
+    finishAnim = setInterval(loop,0)
 }
 
 function makeGraph(){
     bars = []
+    const highest = getHighestValue(array)
     for(let i = 0; i < array.length; i++){
         const newBar = document.createElement('progress')
         newBar.value = array[i]
         newBar.min = 0
         newBar.style = `width: ${barHeight}px`
+        newBar.max = highest
+        graph.appendChild(newBar)
         bars.push(newBar)
-    }
-    const highest = getHighestValue(array)
-    for(let i = 0; i < bars.length; i++){
-        bars[i].max = highest
-        graph.appendChild(bars[i])
     }
 }
 
@@ -319,35 +382,54 @@ function getHighestValue(arr){
     return highest
 }
 
+
+
 function updateBars(){
     for(let i =0; i < array.length; i++) bars[i].value = array[i]
     accessesH1.innerText = arrayAccesses
     comparisonsH1.innerText = comparisons
 }
 
+// ANCHOR CLEAR COLORS
+
 function clearColors(){
-    for(let i = 0; i < bars.length; i++) bars[i].className = ''
+    const redBars = document.querySelectorAll('.red')
+    for(let i = 0; i < redBars.length; i++) redBars[i].className = ''
+}
+function clearColorsGreen(){
+    const greenBars = document.querySelectorAll('.green')
+    for(let i = 0; i < greenBars.length; i++) greenBars[i].className = ''
 }
 
 function setColor(i,color){
-    bars[i].classList.add(color)
+    bars[i].className = color
 }
 
-function swap(arr, i1, i2){
+async function swap(arr, i1, i2){
+    await sleep(delay)
     const temp = arr[i1]
     arr[i1] = arr[i2]
     arr[i2] = temp
-    return arr
+}
+function noSleepSwap(arr, i1, i2){
+    const temp = arr[i1]
+    arr[i1] = arr[i2]
+    arr[i2] = temp
 }
 
 makeGraph()
 
 function randomArray(){
+    if(finishAnim) clearInterval(finishAnim)
     array = []
     for(let i = 0; i < arraySize; i++) array.push(Math.floor(Math.random() * maxSize))
     graph.innerHTML = ''
     bars = []
     makeGraph()
+}
+
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 randomArray()

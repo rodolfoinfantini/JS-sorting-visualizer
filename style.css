@@ -30,15 +30,34 @@ progress{
     height: 1px;
     border: 0;
     width: 100px;
-    /* transform: rotate(180deg); */
+    display: block;
+}
+::-webkit-progress-bar{
+    background-color: transparent;
+
 }
 
 ::-moz-progress-bar{
     background-color: white;
 }
-.red::-moz-progress-bar{
-    background-color: red;
+::-webkit-progress-value{
+    background-color: white;
 }
+
+.red{
+    background-color: hsl(0, 100%, 20%);
+}
+.red::-moz-progress-bar{
+    background-color: hsl(0, 100%, 50%);
+}
+.red::-webkit-progress-value{
+    background-color: hsl(0, 100%, 50%);
+
+}
+
 .green::-moz-progress-bar{
+    background-color: lime;
+}
+.green::-webkit-progress-value{
     background-color: lime;
 }
