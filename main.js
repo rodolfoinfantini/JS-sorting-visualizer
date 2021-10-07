@@ -17,6 +17,7 @@ let highestValue
 let lowestValue
 
 // let sound = inputSound.checked
+let sound = true
 // inputSound.onchange = () => {
 //     sound = inputSound.checked
 // }
@@ -241,6 +242,7 @@ function quick(){ // ANCHOR QUICK
     async function quickPartition(arr,start,end){
         let lastColor = 0
         arrayAccesses++
+        // let pivotValue = arr[Math.floor((end - start) / 2)]
         let pivotValue = arr[end]
         let pivotIndex = start
         for(let i = start; i < end; i++){
@@ -254,10 +256,12 @@ function quick(){ // ANCHOR QUICK
                 setColor(i,'red')
                 lastColor = i
                 pivotIndex++
+                // console.log(pivotValue)
             }
         }
         clearColorForIndex(lastColor)
         arrayAccesses++
+        // noSleepSwap(arr,pivotIndex,arr.indexOf(Math.floor((end - start) / 2)))
         noSleepSwap(arr,pivotIndex,end)
         return pivotIndex
     }
