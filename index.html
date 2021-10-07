@@ -20,11 +20,7 @@
             <label for="barh">Bars Height:</label>
             <input type="number" value="150" name="barh"><br>
             <label for="delay">Delay (ms):</label>
-            <input type="number" value="10" name="delay"><br>
-        </form>
-        <button class="newarray">Generate New Array</button>
-        <button class="start">Start</button>
-        <form>
+            <input type="number" value="10" name="delay"><br><br>
             <label for="type">Sorting method:</label>
             <select name="type">
                 <option value="my">My own</option>
@@ -39,7 +35,20 @@
                 <option value="bogo">Bogosort</option>
                 <option value="js">JavaScript Built in</option>
             </select>
+            <br>
+            <label for="mode">Visualization mode:</label>
+            <select name="mode">
+                <option value="bars">Bars</option>
+                <option value="colors">Colors</option>
+            </select>
+            <br>
+            <label for="visu">Visualization: </label>
+            <input type="checkbox" name="visu" checked>
         </form>
+        <button class="newarray">Generate New Array</button>
+        <button class="start">Start</button>
+        <br>
+        <button class="reversedarray">Generate Reversed Array</button>
     </div>
     <div class="graph">
 

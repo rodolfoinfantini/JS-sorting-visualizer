@@ -6,8 +6,29 @@ const inputMax = document.querySelector('input[name="maxvalue"]')
 const inputBarh = document.querySelector('input[name="barh"]')
 const inputDelay = document.querySelector('input[name="delay"]')
 const newArrayBtn = document.querySelector('button.newarray')
+const reversedArrayBtn = document.querySelector('button.reversedarray')
 const startBtn = document.querySelector('button.start')
 const type = document.querySelector('select[name="type"]')
+const mode = document.querySelector('select[name="mode"]')
+const inputVisualization = document.querySelector('input[name="visu"]')
+const inputSound = document.querySelector('input[name="sound"]')
+
+let highestValue
+let lowestValue
+
+// let sound = inputSound.checked
+// inputSound.onchange = () => {
+//     sound = inputSound.checked
+// }
+let visualization = inputVisualization.checked
+inputVisualization.onchange = () => {
+    visualization = inputVisualization.checked
+}
+
+mode.onchange = () => {
+    document.body.className = mode.value
+    updateBars()
+}
 
 let bars = []
 
@@ -46,6 +67,7 @@ inputBarh.oninput = () => {
 }
 
 newArrayBtn.onclick = randomArray
+reversedArrayBtn.onclick = reversedArray
 startBtn.onclick = startSorting
 
 
@@ -73,9 +95,9 @@ function startSorting(){
     startingTime = new Date()
     console.log(`------ ${type.value} ------`)
     console.log(`Started: ${startingTime.getHours()}:${startingTime.getMinutes()}:${startingTime.getSeconds()}`)
-    lastSorted = 0
     comparisons = 0
     arrayAccesses = 0
+    updateBars()
     if(type.value == "my") myOwn()
     else if(type.value == "bubble") bubble()
     else if(type.value == "insertion") insertion()
@@ -87,11 +109,11 @@ function startSorting(){
     else if(type.value == "comb") comb()
 }
 
-async function myOwn(){
+async function myOwn(){ // ANCHOR MY OWN
     let lastSorted = 0
-    
+    let lastColor = 0
     async function bringToFront(index){
-        await sleep(delay)
+        if(visualization) await sleep(delay)
         let value = array[index]
         for(let i = index; i > 0; i--){
             arrayAccesses++
@@ -108,22 +130,22 @@ async function myOwn(){
                 less.value = array[i]
                 less.index = i
                 arrayAccesses++
-                clearColors()
+                clearColorForIndex(lastColor)
                 setColor(i,'red')
+                lastColor = i
             }
             comparisons++
             arrayAccesses++
         }
         await bringToFront(less.index)
         updateBars()
-        clearColors()
-        setColor(less.index,'red')
         arrayAccesses++
     }
     finished()
 }
 
-async function bubble(){
+async function bubble(){ // ANCHOR BUBBLE
+    let lastColor = 0
     arrayAccesses++
     for(let loopI = 0; loopI < array.length; loopI++){
         arrayAccesses++
@@ -136,17 +158,19 @@ async function bubble(){
                 arrayAccesses++
             }
         }
-        clearColors()
+        clearColorForIndex(lastColor)
         setColor((array.length - 1 - loopI),'red')
+        lastColor = (array.length - 1 - loopI)
         updateBars()
-        await sleep(delay)
+        if(visualization) await sleep(delay)
     }
     finished()
 }
 
 
-async function insertion(){
+async function insertion(){ // ANCHOR INSERTION
     arrayAccesses++
+    let lastColor = 0
     for(let i = 1; i < array.length; i++){
         arrayAccesses++
         comparisons++
@@ -160,19 +184,20 @@ async function insertion(){
                 if(array[innerI] < array[innerI - 1]){
                     arrayAccesses++
                     noSleepSwap(array, innerI, innerI - 1)
-                    updateBars()
-                    clearColors()
+                    // updateBars()
+                    clearColorForIndex(lastColor)
                     setColor(innerI,'red')
+                    lastColor = innerI
                 }
             }
         }
         updateBars()
-        await sleep(delay)
+        if(visualization) await sleep(delay)
     }
     finished()
 }
 
-async function bogo(){
+async function bogo(){ // ANCHOR BOGO
     while(!isSorted()){
         arrayAccesses++
         comparisons++
@@ -181,23 +206,27 @@ async function bogo(){
             noSleepSwap(array, i, Math.floor(Math.random() * (i + 1)))
         }
         updateBars()
-        await sleep(delay)
+        if(visualization) await sleep(delay)
     }
     finished()
 }
 
-function js(){
+function js(){ // ANCHOR JS
     arrayAccesses++
     comparisons++
     array = array.sort((a,b) => {return a > b})
     finished()
 }
 
-function quick(){
+function quick(){ // ANCHOR QUICK
+    let finishedSort = false
     async function quickSort(arr,start,end){
         if(start >= end){
             updateBars()
-            if(isSorted()) finished()
+            if(isSorted() && !finishedSort) {
+                finishedSort = true
+                finished()
+            }
             return
         }
         arrayAccesses++
@@ -210,6 +239,7 @@ function quick(){
         ])
     }
     async function quickPartition(arr,start,end){
+        let lastColor = 0
         arrayAccesses++
         let pivotValue = arr[end]
         let pivotIndex = start
@@ -220,20 +250,24 @@ function quick(){
                 arrayAccesses++
                 await swap(arr,i,pivotIndex)
                 updateBars()
-                clearColors()
+                clearColorForIndex(lastColor)
                 setColor(i,'red')
+                lastColor = i
                 pivotIndex++
             }
         }
+        clearColorForIndex(lastColor)
         arrayAccesses++
-        await swap(arr,pivotIndex,end)
+        noSleepSwap(arr,pivotIndex,end)
         return pivotIndex
     }
     quickSort(array,0,array.length - 1)
 }
 
-async function oddeven(){
+async function oddeven(){ // ANCHOR ODD EVEN
     let isSorted = false
+    let lastOddColor = 0
+    let lastEvenColor = 0
     while(!isSorted){
         isSorted = true
         arrayAccesses++
@@ -244,11 +278,11 @@ async function oddeven(){
                 arrayAccesses++
                 noSleepSwap(array,i,i+1)
                 isSorted = false
-                clearColors()
+                clearColorForIndex(lastOddColor)
                 setColor(i + 1,'red')
+                lastOddColor = i + 1
             }
         }
-        await sleep(0)
         arrayAccesses++
         for(let i = 0; i < array.length; i = i + 2){
             comparisons++
@@ -257,18 +291,21 @@ async function oddeven(){
                 arrayAccesses++
                 noSleepSwap(array,i,i+1)
                 isSorted = false
-                clearColors()
+                clearColorForIndex(lastEvenColor)
                 setColor(i,'red')
+                lastEvenColor = i
             }
         }
         updateBars()
-        await sleep(delay)
+        if(visualization) await sleep(delay)
     }
     finished()
 }
 
-async function cocktail(){
+async function cocktail(){ // ANCHOR COCKTAIL
     arrayAccesses++
+    let lastColor = 0
+    let lastBackColor = 0
     for(let loopI = 0; loopI < array.length; loopI++){
         let i = 0
         arrayAccesses++
@@ -281,11 +318,12 @@ async function cocktail(){
                 arrayAccesses++
                 noSleepSwap(array, i, i + 1)
                 arrayAccesses++
-                clearColors()
+                clearColorForIndex(lastColor)
                 setColor(i + 1,'red')
+                lastColor = i + 1
             }
         }
-        await sleep(0)
+        if(visualization) await sleep(0)
         arrayAccesses++
         for(backI = array.length - 1 - loopI; backI >= loopI; backI--){
             arrayAccesses++
@@ -293,20 +331,22 @@ async function cocktail(){
             if(array[backI] < array[backI - 1]){
                 noSleepSwap(array, backI, backI - 1)
                 arrayAccesses++
-                clearColors()
+                clearColorForIndex(lastBackColor)
                 setColor(backI - 1,'red')
+                lastBackColor = backI - 1
             }
         }
         updateBars()       
         if(isSorted(array)) break
-        await sleep(delay)
+        if(visualization) await sleep(delay)
     }
     finished()
 }
 
-async function comb(){
+async function comb(){ // ANCHOR COMB
     let gap = array.length
     let swapped = true
+    let lastColor = 0
 
     while(gap > 1 || swapped){
         gap = Math.max(Math.floor(gap / 1.3),1)
@@ -320,11 +360,12 @@ async function comb(){
                 noSleepSwap(array,i,i + gap)
                 swapped = true
             }
-            clearColors()
+            clearColorForIndex(lastColor)
             setColor(i,'red')
+            lastColor = i
         }
         updateBars()
-        await sleep(delay)
+        if(visualization) await sleep(delay)
     }
     finished()
 }
@@ -353,27 +394,29 @@ function finished(){
         for(let j = 0; j < sum; j++){
             if(!!bars[i + j]) setColor(i + j,'green')
         }
+        playSoundByIndex(i)
         i = i + sum
         if(i > bars.length) {
             clearInterval(finishAnim)
             clearColorsGreen()
         }
     }
-    finishAnim = setInterval(loop,0)
+    if(mode.value == 'bars') finishAnim = setInterval(loop,0)
 }
 
 function makeGraph(){
     bars = []
-    const highest = getHighestValue(array)
     for(let i = 0; i < array.length; i++){
         const newBar = document.createElement('progress')
         newBar.value = array[i]
         newBar.min = 0
         newBar.style = `width: ${barHeight}px`
-        newBar.max = highest
+        newBar.max = highestValue
         graph.appendChild(newBar)
         bars.push(newBar)
     }
+    document.body.className = mode.value
+    updateBars()
 }
 
 function getHighestValue(arr){
@@ -381,11 +424,20 @@ function getHighestValue(arr){
     for(let i = 1; i < arr.length; i++) if(arr[i] > highest) highest = arr[i]
     return highest
 }
+function getLowestValue(arr){
+    let lowest = arr[0]
+    for(let i = 1; i < arr.length; i++) if(arr[i] < lowest) lowest = arr[i]
+    return lowest
+}
 
 
 
 function updateBars(){
-    for(let i =0; i < array.length; i++) bars[i].value = array[i]
+    for(let i =0; i < array.length; i++){
+        bars[i].value = array[i]
+        if(mode.value == 'colors') bars[i].style = `background-color: hsl(${getHueFromIndex(bars[i].value)} 100% 50%)`
+        else bars[i].style = ''
+    } 
     accessesH1.innerText = arrayAccesses
     comparisonsH1.innerText = comparisons
 }
@@ -396,17 +448,20 @@ function clearColors(){
     const redBars = document.querySelectorAll('.red')
     for(let i = 0; i < redBars.length; i++) redBars[i].className = ''
 }
+function clearColorForIndex(i){
+    bars[i].className = ''
+}
 function clearColorsGreen(){
     const greenBars = document.querySelectorAll('.green')
     for(let i = 0; i < greenBars.length; i++) greenBars[i].className = ''
 }
 
 function setColor(i,color){
-    bars[i].className = color
+    if(mode.value == 'bars') bars[i].className = color
 }
 
 async function swap(arr, i1, i2){
-    await sleep(delay)
+    if(visualization) await sleep(delay)
     const temp = arr[i1]
     arr[i1] = arr[i2]
     arr[i2] = temp
@@ -417,14 +472,24 @@ function noSleepSwap(arr, i1, i2){
     arr[i2] = temp
 }
 
-makeGraph()
-
 function randomArray(){
     if(finishAnim) clearInterval(finishAnim)
     array = []
     for(let i = 0; i < arraySize; i++) array.push(Math.floor(Math.random() * maxSize))
     graph.innerHTML = ''
     bars = []
+    highestValue = getHighestValue(array)
+    lowestValue = getLowestValue(array)
+    makeGraph()
+}
+function reversedArray(){
+    if(finishAnim) clearInterval(finishAnim)
+    array = []
+    for(let i = arraySize - 1; i >= 0; i--) array.push(i)
+    graph.innerHTML = ''
+    bars = []
+    highestValue = getHighestValue(array)
+    lowestValue = getLowestValue(array)
     makeGraph()
 }
 
@@ -433,3 +498,24 @@ function sleep(ms){
 }
 
 randomArray()
+
+const audio = new(window.AudioContext || window.webkitAudioContext)()
+async function playSound(f){
+    const oscillator = audio.createOscillator()
+    oscillator.type = 'square'
+    oscillator.frequency.value = f
+    oscillator.connect(audio.destination)
+    oscillator.start()
+    await sleep(0)
+    oscillator.stop()
+}
+
+const fRange = {from: 300, to: 1000}
+
+function playSoundByIndex(i){
+    //if(sound) playSound((fRange.to - fRange.from) * ((i - lowestValue) / (getHighestValue(array) - lowestValue)) + fRange.from)
+}
+
+function getHueFromIndex(i){
+    return 255 * (i / highestValue)
+}

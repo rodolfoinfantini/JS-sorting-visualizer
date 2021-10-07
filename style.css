@@ -37,10 +37,16 @@ progress{
 
 }
 
-::-moz-progress-bar{
+body.colors ::-moz-progress-bar{
+    background-color: transparent;
+}
+body.bars ::-moz-progress-bar{
     background-color: white;
 }
-::-webkit-progress-value{
+body.colors ::-webkit-progress-value{
+    background-color: transparent;
+}
+body.bars ::-webkit-progress-value{
     background-color: white;
 }
 
@@ -48,16 +54,16 @@ progress{
     background-color: hsl(0, 100%, 20%);
 }
 .red::-moz-progress-bar{
-    background-color: hsl(0, 100%, 50%);
+    background-color: hsl(0, 100%, 50%)!important;
 }
 .red::-webkit-progress-value{
-    background-color: hsl(0, 100%, 50%);
+    background-color: hsl(0, 100%, 50%)!important;
 
 }
 
 .green::-moz-progress-bar{
-    background-color: lime;
+    background-color: lime!important;
 }
 .green::-webkit-progress-value{
-    background-color: lime;
+    background-color: lime!important;
 }
