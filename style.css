@@ -7,14 +7,17 @@ body{
     flex-direction: column;
     justify-content: center;
     /* align-items: center; */
-    transform: rotate(-90deg) scale(2);
-    transform-origin: top right;
-    gap: 0.5px;
+    transform: rotate(-90deg);
+    transform-origin: top left;
+    gap: 1px;
     pointer-events: none;
-    width: 150px;
+    width: 300px;
     padding-bottom: 100px;
-    padding-left: 100px;
-    margin-top: 400px;
+    margin-top: 700px;
+}
+
+body.colors .graph{
+    gap: 0;
 }
 
 .data{
@@ -27,7 +30,7 @@ body{
 
 progress{
     background-color: transparent;
-    height: 1px;
+    height: 2px;
     border: 0;
     width: 100px;
     display: block;
@@ -39,11 +42,11 @@ progress{
 
 }
 
-body.colors ::-moz-progress-bar{
-    background-color: transparent;
-}
 body ::-moz-progress-bar{
     background-color: white;
+}
+body.colors ::-moz-progress-bar{
+    background-color: transparent;
 }
 body.colors ::-webkit-progress-value{
     background-color: transparent;

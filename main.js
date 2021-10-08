@@ -9,7 +9,7 @@ const newArrayBtn = document.querySelector('button.newarray')
 const reversedArrayBtn = document.querySelector('button.reversedarray')
 const startBtn = document.querySelector('button.start')
 const type = document.querySelector('select[name="type"]')
-// const mode = document.querySelector('select[name="mode"]')
+const mode = document.querySelector('select[name="mode"]')
 // const inputVisualization = document.querySelector('input[name="visu"]')
 // const inputSound = document.querySelector('input[name="sound"]')
 
@@ -40,11 +40,11 @@ let lowestValue
 // inputVisualization.onchange = () => {
 //     visualization = inputVisualization.checked
 // }
-
-// mode.onchange = () => {
-//     document.body.className = mode.value
-//     updateBars()
-// }
+document.body.className = mode.value
+mode.onchange = () => {
+    document.body.className = mode.value
+    updateBars()
+}
 
 let bars = []
 
@@ -137,11 +137,23 @@ function finished(){
 
     let i = 0
     let sum = 5
+    let lastColors = []
+    const redBarSize = 5
     function loop(){
         for(let j = 0; j < sum; j++){
-            if(!!bars[i + j]) setColor(i + j,'green')
+            lastColors = []
+            for(let k = 0; k < redBarSize; k++){
+                if(lastColors[k] != undefined) clearColorForIndex(k)
+                if(!!bars[i + j + k]) {
+                    if(mode.value === 'colors') bars[i + j + k].value = highestValue
+                    setColor(i + j + k,'red')
+                    lastColors.push(i + j + k)
+                }
+            }
+            if(!!bars[i + j - redBarSize]){
+                setColor(i + j - redBarSize,'green')
+            }
         }
-        playSoundByIndex(i)
         i = i + sum
         if(i > bars.length) {
             clearInterval(finishAnim)
@@ -157,7 +169,7 @@ function makeGraph(){
         const newBar = document.createElement('progress')
         newBar.value = array[i]
         newBar.min = 0
-        newBar.style = `width: ${barHeight}px`
+        newBar.style = `width: ${barHeight}px;`
         newBar.max = highestValue
         graph.appendChild(newBar)
         bars.push(newBar)
@@ -182,8 +194,8 @@ function getLowestValue(arr){
 function updateBars(){
     for(let i = 0; i < array.length; i++){
         bars[i].value = array[i]
-        /* if(mode.value == 'colors') bars[i].style = `background-color: hsl(${getHueFromIndex(bars[i].value)} 100% 50%)`
-        else bars[i].style = '' */
+        if(mode.value == 'colors') bars[i].style.background = `hsl(${getHueFromIndex(bars[i].value)} 100% 50%)`
+        else bars[i].style.background = `transparent`
     }
     accessesH1.innerText = arrayAccesses
     comparisonsH1.innerText = comparisons
@@ -207,17 +219,6 @@ function setColor(i,color){
     /* if(mode.value == 'bars')  */bars[i].className = color
 }
 
-async function swap(arr, i1, i2){
-    if(visualization) await sleep(delay)
-    const temp = arr[i1]
-    arr[i1] = arr[i2]
-    arr[i2] = temp
-}
-function noSleepSwap(arr, i1, i2){
-    const temp = arr[i1]
-    arr[i1] = arr[i2]
-    arr[i2] = temp
-}
 
 function randomArray(){
     if(finishAnim) clearInterval(finishAnim)
@@ -240,29 +241,8 @@ function reversedArray(){
     makeGraph()
 }
 
-function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 randomArray()
 
-const audio = new(window.AudioContext || window.webkitAudioContext)()
-async function playSound(f){
-    const oscillator = audio.createOscillator()
-    oscillator.type = 'square'
-    oscillator.frequency.value = f
-    oscillator.connect(audio.destination)
-    oscillator.start()
-    await sleep(0)
-    oscillator.stop()
-}
-
-const fRange = {from: 300, to: 1000}
-
-function playSoundByIndex(i){
-    //if(sound) playSound((fRange.to - fRange.from) * ((i - lowestValue) / (getHighestValue(array) - lowestValue)) + fRange.from)
-}
-
 function getHueFromIndex(i){
-    return 255 * (i / highestValue)
+    return 359 * (i / highestValue)
 }
