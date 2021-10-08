@@ -9,7 +9,7 @@ body{
     /* align-items: center; */
     transform: rotate(-90deg) scale(2);
     transform-origin: top right;
-    gap: 0px;
+    gap: 0.5px;
     pointer-events: none;
     width: 150px;
     padding-bottom: 100px;
@@ -31,6 +31,8 @@ progress{
     border: 0;
     width: 100px;
     display: block;
+    outline: none;
+    padding: 0;
 }
 ::-webkit-progress-bar{
     background-color: transparent;
@@ -40,13 +42,13 @@ progress{
 body.colors ::-moz-progress-bar{
     background-color: transparent;
 }
-body.bars ::-moz-progress-bar{
+body ::-moz-progress-bar{
     background-color: white;
 }
 body.colors ::-webkit-progress-value{
     background-color: transparent;
 }
-body.bars ::-webkit-progress-value{
+body ::-webkit-progress-value{
     background-color: white;
 }
 
