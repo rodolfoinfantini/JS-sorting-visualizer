@@ -22,6 +22,8 @@ onmessage = (e) => {
             comparisons++
             if(arr[i] < pivotValue){
                 arrayAccesses++
+                postMessage({cmd: 'sound', value: arr[i]})
+                postMessage({cmd: 'sound', value: arr[pivotIndex]})
                 swap(arr,i,pivotIndex)
                 postMessage({cmd: 'update', arr: array, lastColor: lastColor, currentColor: i, arrayAccesses: arrayAccesses, comparisons: comparisons})
                 lastColor = i
@@ -30,6 +32,8 @@ onmessage = (e) => {
         }
         postMessage({cmd: 'update', arr: array, lastColor: lastColor, arrayAccesses: arrayAccesses, comparisons: comparisons})
         arrayAccesses++
+        postMessage({cmd: 'sound', value: arr[pivotIndex]})
+        postMessage({cmd: 'sound', value: arr[end]})
         swap(arr,pivotIndex,end)
         return pivotIndex
     }

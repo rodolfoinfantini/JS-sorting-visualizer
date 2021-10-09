@@ -10,8 +10,31 @@ const reversedArrayBtn = document.querySelector('button.reversedarray')
 const startBtn = document.querySelector('button.start')
 const type = document.querySelector('select[name="type"]')
 const mode = document.querySelector('select[name="mode"]')
+const inputSound = document.querySelector('input[name="sound"]')
 // const inputVisualization = document.querySelector('input[name="visu"]')
 // const inputSound = document.querySelector('input[name="sound"]')
+
+const audioCtx = new AudioContext()
+let osc = audioCtx.createOscillator()
+osc.connect(audioCtx.destination)
+let defaultF = 400
+let f = inputSound.checked ? defaultF : 0
+osc.frequency.value = f
+
+function playSound(value){
+    if(inputSound.checked) osc.frequency.value = f * Math.pow(2, (value / (highestValue-lowestValue) * 1.7)+0.2)
+}
+
+inputSound.onchange = () => {
+    f = inputSound.checked ? defaultF : 0
+    if(!inputSound.checked && isRunning) {
+        osc.stop()
+        osc = audioCtx.createOscillator()
+        osc.connect(audioCtx.destination)
+    }else if(inputSound.checked && isRunning) {
+        osc.start()
+    }
+}
 
 let isRunning = false
 
@@ -34,7 +57,10 @@ sortWorker.onmessage = (e) => {
     }else if(e.data.cmd === 'color'){
         if(e.data.lastColor != undefined) clearColorForIndex(Math.min(e.data.lastColor,array.length - 1))
         if(e.data.currentColor != undefined) setColor(Math.min(e.data.currentColor,array.length - 1),'red')
-    }else{
+    }else if(e.data.cmd === 'sound'){
+        playSound(e.data.value)
+    }
+    else{
         console.log('Something is wrong!')
     }
 }
@@ -100,6 +126,7 @@ function isSorted(arr){
 
 function startSorting(){
     if(isRunning) return
+    if(inputSound.checked) osc.start()
     isRunning = true
     if(finishAnim) clearInterval(finishAnim)
     startingTime = new Date()
@@ -147,12 +174,16 @@ function finished(){
             }
             if(!!bars[i + j - redBarSize]){
                 setColor(i + j - redBarSize,'green')
+                playSound(array[i + j - redBarSize])
             }
         }
         i = i + sum
         if(i > bars.length) {
             clearInterval(finishAnim)
             clearColorsGreen()
+            osc.stop()
+            osc = audioCtx.createOscillator()
+            osc.connect(audioCtx.destination)
         }
     }
     finishAnim = setInterval(loop,0)

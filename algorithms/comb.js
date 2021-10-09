@@ -16,6 +16,8 @@ onmessage = (e) => {
             comparisons++
             if(array[i] > array[i + gap]){
                 arrayAccesses++
+                postMessage({cmd: 'sound', value: array[i]})
+                postMessage({cmd: 'sound', value: array[i+gap]})
                 swap(array,i,i + gap)
                 swapped = true
             }
@@ -25,6 +27,7 @@ onmessage = (e) => {
             lastGapColor = i + gap
         }
         // JUST TO SLOW DOWN A BIT
+        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
         postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
         postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
         postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})

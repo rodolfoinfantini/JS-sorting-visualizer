@@ -31,11 +31,13 @@ function merge(arr,left,middle,right){
       comparisons++
       if(L[i] <= R[j]){
           arrayAccesses++
+          postMessage({cmd: 'sound', value: L[j]})
           arr[k] = L[i]
           i++
       }
       else{
           arrayAccesses++
+          postMessage({cmd: 'sound', value: R[j]})
           arr[k] = R[j]
           j++
       }
@@ -46,6 +48,7 @@ function merge(arr,left,middle,right){
   while(i < n1){
       arrayAccesses++
       arr[k] = L[i]
+      postMessage({cmd: 'sound', value: L[i]})
       postMessage({cmd: 'color', lastColor: lastColor2, currentColor: k})
       lastColor2 = k
       i++
@@ -54,6 +57,7 @@ function merge(arr,left,middle,right){
   while(j < n2){
       arrayAccesses++
       arr[k] = R[j]
+      postMessage({cmd: 'sound', value: R[j]})
       postMessage({cmd: 'color', lastColor: lastColor2, currentColor: k})
       lastColor2 = k
       j++

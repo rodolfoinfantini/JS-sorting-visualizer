@@ -14,6 +14,7 @@ onmessage = (e) => {
             arrayAccesses++
             if(array[i] > array[i + 1]){
                 arrayAccesses++
+                postMessage({cmd: 'sound', value: array[i+1]})
                 swap(array,i,i+1)
                 isSorted = false
                 postMessage({cmd: 'color', lastColor: lastOddColor, currentColor: i + 1})
@@ -27,6 +28,7 @@ onmessage = (e) => {
             arrayAccesses++
             if(array[i] > array[i + 1]){
                 arrayAccesses++
+                postMessage({cmd: 'sound', value: array[i+1]})
                 swap(array,i,i+1)
                 isSorted = false
                 postMessage({cmd: 'color', lastColor: lastEvenColor, currentColor: i})

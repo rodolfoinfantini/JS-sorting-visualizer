@@ -24,6 +24,7 @@ onmessage = (e) => {
         for(let i = lastSorted; i < array.length; i++) {
             arrayAccesses++
             comparisons++
+            postMessage({cmd: 'sound', value: array[i]})
             if(array[i] > less.value){
                 arrayAccesses++
                 less.value = array[i]

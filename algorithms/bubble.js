@@ -12,6 +12,7 @@ onmessage = (e) => {
             arrayAccesses++
             if(array[i] > array[i + 1]){
                 arrayAccesses++
+                postMessage({cmd: 'sound', value: array[i+1]})
                 postMessage({cmd: 'color', lastColor: lastColor, currentColor: i + 1})
                 lastColor = i + 1
                 swap(array, i, i + 1)
