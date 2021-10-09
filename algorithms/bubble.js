@@ -12,11 +12,12 @@ onmessage = (e) => {
             arrayAccesses++
             if(array[i] > array[i + 1]){
                 arrayAccesses++
-                swap(array, i, i + 1)
-                postMessage({cmd: 'update', arr: array, lastColor: lastColor, currentColor: i + 1, arrayAccesses: arrayAccesses, comparisons: comparisons})
+                postMessage({cmd: 'color', lastColor: lastColor, currentColor: i + 1})
                 lastColor = i + 1
+                swap(array, i, i + 1)
             }
         }
+        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
     }
     postMessage({cmd: 'finished', arr: array})
 }

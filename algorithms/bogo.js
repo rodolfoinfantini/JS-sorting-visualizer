@@ -10,13 +10,15 @@ onmessage = (e) => {
             arrayAccesses++
             swap(array, i, Math.floor(Math.random() * (i + 1)))
         }
-        postMessage({cmd: 'update', arr: array})
+        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
     }
     postMessage({cmd: 'finished', arr: array})
 }
 function isSorted(arr){
     let notSorted = false
     for(let i = 0; i < arr.length; i++){
+        arrayAccesses++
+        comparisons++
         if(arr[i] > arr[i + 1]) {
             notSorted = true
             break

@@ -16,7 +16,7 @@ onmessage = (e) => {
                 arrayAccesses++
                 swap(array,i,i+1)
                 isSorted = false
-                postMessage({cmd: 'update', arr: array, lastColor: lastOddColor, currentColor: i + 1, arrayAccesses: arrayAccesses, comparisons: comparisons})
+                postMessage({cmd: 'color', lastColor: lastOddColor, currentColor: i + 1})
                 lastOddColor = i + 1
             }
         }
@@ -29,7 +29,7 @@ onmessage = (e) => {
                 arrayAccesses++
                 swap(array,i,i+1)
                 isSorted = false
-                postMessage({cmd: 'update', arr: array, lastColor: lastEvenColor, currentColor: i, arrayAccesses: arrayAccesses, comparisons: comparisons})
+                postMessage({cmd: 'color', lastColor: lastEvenColor, currentColor: i})
                 lastEvenColor = i
             }
         }

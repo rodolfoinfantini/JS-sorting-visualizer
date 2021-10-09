@@ -5,6 +5,7 @@ onmessage = (e) => {
     array = e.data
     let lastSorted = 0
     let lastColor = 0
+    let lastColor2 = 0
     function bringToFront(index){
         arrayAccesses++
         let value = array[index]
@@ -27,12 +28,13 @@ onmessage = (e) => {
                 arrayAccesses++
                 less.value = array[i]
                 less.index = i
-                postMessage({cmd: 'update', arr: array, lastColor: lastColor, currentColor: i, arrayAccesses: arrayAccesses, comparisons: comparisons})
+                postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
                 lastColor = i
             }
         }
         bringToFront(less.index)
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
+        postMessage({cmd: 'update', arr: array, lastColor: lastColor2, currentColor: lastSorted - 1,arrayAccesses: arrayAccesses, comparisons: comparisons})
+        lastColor2 = lastSorted - 1
     }
     postMessage({cmd: 'finished', arr: array})
 }

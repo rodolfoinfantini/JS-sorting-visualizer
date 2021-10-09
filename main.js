@@ -13,33 +13,35 @@ const mode = document.querySelector('select[name="mode"]')
 // const inputVisualization = document.querySelector('input[name="visu"]')
 // const inputSound = document.querySelector('input[name="sound"]')
 
+let isRunning = false
 
+let speed = 0.1
 const sortWorker = new Worker('algorithms/main.js')
 sortWorker.onmessage = (e) => {
     if(e.data.cmd === 'update'){
         array = e.data.arr
+        updateBars()
         if(e.data.arrayAccesses != undefined) arrayAccesses = e.data.arrayAccesses
         if(e.data.comparisons != undefined) comparisons = e.data.comparisons
-        updateBars()
         if(e.data.lastColor != undefined) clearColorForIndex(Math.min(e.data.lastColor,array.length - 1))
         if(e.data.currentColor != undefined) setColor(Math.min(e.data.currentColor,array.length - 1),'red')
-        // if(type.value === 'merge') if(isSorted(array)) finished()
     }else if(e.data.cmd === 'finished'){
         array = e.data.arr
-        finished()
+        if(e.data.animations == undefined){
+            finished()
+            return
+        }
     }else if(e.data.cmd === 'color'){
         if(e.data.lastColor != undefined) clearColorForIndex(Math.min(e.data.lastColor,array.length - 1))
         if(e.data.currentColor != undefined) setColor(Math.min(e.data.currentColor,array.length - 1),'red')
+    }else{
+        console.log('Something is wrong!')
     }
 }
 
 let highestValue
 let lowestValue
 
-// let visualization = inputVisualization.checked
-// inputVisualization.onchange = () => {
-//     visualization = inputVisualization.checked
-// }
 document.body.className = mode.value
 mode.onchange = () => {
     document.body.className = mode.value
@@ -55,10 +57,6 @@ let colors = []
 let comparisons = 0
 let arrayAccesses = 0
 
-// let delay = parseInt(inputDelay.value)
-// inputDelay.oninput = () => {
-//     if(!isNaN(inputDelay.value)) delay = parseInt(inputDelay.value)
-// }
 
 let arraySize = parseInt(inputSize.value)
 inputSize.oninput = () => {
@@ -75,9 +73,6 @@ graph.style = `width: ${barHeight}px`
 inputBarh.oninput = () => {
     if(!isNaN(inputBarh.value)) {
         barHeight = parseInt(inputBarh.value)
-        for(let i = 0; i < bars.length; i++){
-            bars[i].style = `width: ${barHeight}px`
-        }
         graph.style = `width: ${barHeight}px`
     }
 }
@@ -94,10 +89,7 @@ let endingTime
 function isSorted(arr){
     let notSorted = false
     for(let i = 0; i < arr.length; i++){
-        // arrayAccesses++
         if(arr[i] > arr[i + 1]) {
-            /* arrayAccesses++
-            comparisons++ */
             notSorted = true
             break
         }
@@ -107,6 +99,8 @@ function isSorted(arr){
 
 
 function startSorting(){
+    if(isRunning) return
+    isRunning = true
     if(finishAnim) clearInterval(finishAnim)
     startingTime = new Date()
     console.log(`------ ${type.value} ------`)
@@ -120,6 +114,7 @@ function startSorting(){
 let finishAnim
 
 function finished(){
+    isRunning = false
     if(finishAnim) clearInterval(finishAnim)
     updateBars()
     if(!isSorted(array)){
@@ -138,7 +133,7 @@ function finished(){
     let i = 0
     let sum = 5
     let lastColors = []
-    const redBarSize = 5
+    const redBarSize = 2
     function loop(){
         for(let j = 0; j < sum; j++){
             lastColors = []
@@ -160,7 +155,7 @@ function finished(){
             clearColorsGreen()
         }
     }
-    /* if(mode.value == 'bars')  */finishAnim = setInterval(loop,0)
+    finishAnim = setInterval(loop,0)
 }
 
 function makeGraph(){
@@ -169,12 +164,13 @@ function makeGraph(){
         const newBar = document.createElement('progress')
         newBar.value = array[i]
         newBar.min = 0
-        newBar.style = `width: ${barHeight}px;`
         newBar.max = highestValue
         graph.appendChild(newBar)
         bars.push(newBar)
     }
-    // document.body.className = mode.value
+    if(bars.length > 400 && bars.length <= 610) graph.className = 'graph small'
+    else if(bars.length > 610) graph.className = 'graph smallest'
+    else graph.className = 'graph'
     updateBars()
 }
 
@@ -216,11 +212,12 @@ function clearColorsGreen(){
 }
 
 function setColor(i,color){
-    /* if(mode.value == 'bars')  */bars[i].className = color
+    bars[i].className = color
 }
 
 
 function randomArray(){
+    if(isRunning) return
     if(finishAnim) clearInterval(finishAnim)
     array = []
     for(let i = 0; i < arraySize; i++) array.push(Math.floor(Math.random() * maxSize))
@@ -231,6 +228,7 @@ function randomArray(){
     makeGraph()
 }
 function reversedArray(){
+    if(isRunning) return
     if(finishAnim) clearInterval(finishAnim)
     array = []
     for(let i = arraySize - 1; i >= 0; i--) array.push(i)
