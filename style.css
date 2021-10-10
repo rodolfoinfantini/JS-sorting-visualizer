@@ -8,23 +8,24 @@ body{
 .graph{
     display: flex;
     flex-direction: column;
-    transform: rotate(-90deg) translateY(100%);
-    transform-origin: bottom left;
+    transform: rotate(-90deg) translateX(-100%);
+    transform-origin: top left;
     gap: 0px;
     pointer-events: none;
     width: 300px;
-    position: absolute;
-    bottom: 10px;
-    left: 300px;
-    padding-bottom: 10px;
+    /* position: absolute; */
+    /* bottom: 20px; */
+    /* left: 20px; */
+    /* padding-bottom: 20px; */
+    padding: 10px;
 }
 
 
 .data{
     background-color: transparent;
-    position: fixed;
-    top: 10px;
-    left: 10px;
+    /* position: fixed; */
+    /* top: 10px; */
+    /* left: 10px; */
     z-index: 2;
 }
 
