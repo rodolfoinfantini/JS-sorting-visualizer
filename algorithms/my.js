@@ -1,8 +1,7 @@
-let array = []
 let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
-    array = e.data
+    let array = e.data
     let lastSorted = 0
     let lastColor = 0
     let lastColor2 = 0
@@ -24,7 +23,8 @@ onmessage = (e) => {
         for(let i = lastSorted; i < array.length; i++) {
             arrayAccesses++
             comparisons++
-            postMessage({cmd: 'sound', value: array[i]})
+            postMessage({cmd: 'sound', value: array[i], osc: 1})
+            postMessage({cmd: 'sound', value: less.value, osc: 2})
             if(array[i] > less.value){
                 arrayAccesses++
                 less.value = array[i]

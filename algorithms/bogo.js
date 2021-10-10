@@ -1,8 +1,7 @@
-let array = []
 let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
-    array = e.data
+    let array = e.data
     while(!isSorted(array)){
         arrayAccesses++
         comparisons++
@@ -19,6 +18,9 @@ function isSorted(arr){
     for(let i = 0; i < arr.length; i++){
         arrayAccesses++
         comparisons++
+        postMessage({cmd: 'sound', value: arr[i], osc: 1})
+        postMessage({cmd: 'sound', value: arr[i+1], osc: 2})
+        lastColor = i
         if(arr[i] > arr[i + 1]) {
             notSorted = true
             break

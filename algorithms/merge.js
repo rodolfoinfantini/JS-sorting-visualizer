@@ -1,8 +1,7 @@
-let array = []
 let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
-    array = e.data
+    let array = e.data
     arrayAccesses++
     mergeSort(array,0,array.length - 1)
     postMessage({cmd: 'finished', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
@@ -29,26 +28,26 @@ function merge(arr,left,middle,right){
   let k = left
   while(i < n1 && j < n2){
       comparisons++
+      postMessage({cmd: 'sound', value: L[i], osc: 1})
+      postMessage({cmd: 'sound', value: R[j], osc: 2})
       if(L[i] <= R[j]){
           arrayAccesses++
-          postMessage({cmd: 'sound', value: L[j]})
           arr[k] = L[i]
           i++
       }
       else{
           arrayAccesses++
-          postMessage({cmd: 'sound', value: R[j]})
           arr[k] = R[j]
           j++
       }
-      postMessage({cmd: 'update', arr: array, lastColor: lastColor, currentColor: k, arrayAccesses: arrayAccesses, comparisons: comparisons})
+      postMessage({cmd: 'update', arr: arr, lastColor: lastColor, currentColor: k, arrayAccesses: arrayAccesses, comparisons: comparisons})
       lastColor = k
       k++
   }
   while(i < n1){
       arrayAccesses++
       arr[k] = L[i]
-      postMessage({cmd: 'sound', value: L[i]})
+    //   postMessage({cmd: 'sound', value: L[i]})
       postMessage({cmd: 'color', lastColor: lastColor2, currentColor: k})
       lastColor2 = k
       i++
@@ -57,7 +56,7 @@ function merge(arr,left,middle,right){
   while(j < n2){
       arrayAccesses++
       arr[k] = R[j]
-      postMessage({cmd: 'sound', value: R[j]})
+    //   postMessage({cmd: 'sound', value: R[j]})
       postMessage({cmd: 'color', lastColor: lastColor2, currentColor: k})
       lastColor2 = k
       j++

@@ -1,8 +1,7 @@
-let array = []
 let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
-    array = e.data
+    let array = e.data
     let gap = array.length
     let swapped = true
     let lastColor = 0
@@ -14,28 +13,19 @@ onmessage = (e) => {
         for(let i = 0; i < array.length - gap; i++){
             arrayAccesses++
             comparisons++
+            postMessage({cmd: 'sound', value: array[i], osc: 1})
+            postMessage({cmd: 'sound', value: array[i+gap], osc: 2})
             if(array[i] > array[i + gap]){
                 arrayAccesses++
-                postMessage({cmd: 'sound', value: array[i]})
-                postMessage({cmd: 'sound', value: array[i+gap]})
                 swap(array,i,i + gap)
                 swapped = true
+                postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
             }
             postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
             postMessage({cmd: 'color', lastColor: lastGapColor, currentColor: i + gap})
             lastColor = i
             lastGapColor = i + gap
         }
-        // JUST TO SLOW DOWN A BIT
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
     }
     postMessage({cmd: 'finished', arr: array})
 }

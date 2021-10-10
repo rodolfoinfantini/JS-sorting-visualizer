@@ -1,8 +1,7 @@
-let array = []
 let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
-    array = e.data
+    let array = e.data
     async function quickSort(arr,start,end){
         if(start >= end) return
         arrayAccesses++
@@ -20,20 +19,21 @@ onmessage = (e) => {
         for(let i = start; i < end; i++){
             arrayAccesses++
             comparisons++
+            postMessage({cmd: 'sound', value: arr[i], osc: 1})
+            postMessage({cmd: 'sound', value: arr[pivotIndex], osc: 2})
             if(arr[i] < pivotValue){
                 arrayAccesses++
-                postMessage({cmd: 'sound', value: arr[i]})
-                postMessage({cmd: 'sound', value: arr[pivotIndex]})
                 swap(arr,i,pivotIndex)
                 postMessage({cmd: 'update', arr: array, lastColor: lastColor, currentColor: i, arrayAccesses: arrayAccesses, comparisons: comparisons})
                 lastColor = i
                 pivotIndex++
             }
+            
         }
         postMessage({cmd: 'update', arr: array, lastColor: lastColor, arrayAccesses: arrayAccesses, comparisons: comparisons})
         arrayAccesses++
-        postMessage({cmd: 'sound', value: arr[pivotIndex]})
-        postMessage({cmd: 'sound', value: arr[end]})
+        /* postMessage({cmd: 'sound', value: arr[pivotIndex]})
+        postMessage({cmd: 'sound', value: arr[end]}) */
         swap(arr,pivotIndex,end)
         return pivotIndex
     }

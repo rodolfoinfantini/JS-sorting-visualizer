@@ -1,44 +1,3 @@
-const graph = document.querySelector('div.graph')
-const comparisonsH1 = document.querySelector('h1.comparisons')
-const accessesH1 = document.querySelector('h1.accesses')
-const inputSize = document.querySelector('input[name="arraysize"]')
-const inputMax = document.querySelector('input[name="maxvalue"]')
-const inputBarh = document.querySelector('input[name="barh"]')
-// const inputDelay = document.querySelector('input[name="delay"]')
-const newArrayBtn = document.querySelector('button.newarray')
-const reversedArrayBtn = document.querySelector('button.reversedarray')
-const startBtn = document.querySelector('button.start')
-const type = document.querySelector('select[name="type"]')
-const mode = document.querySelector('select[name="mode"]')
-const inputSound = document.querySelector('input[name="sound"]')
-// const inputVisualization = document.querySelector('input[name="visu"]')
-// const inputSound = document.querySelector('input[name="sound"]')
-
-const audioCtx = new AudioContext()
-let osc = audioCtx.createOscillator()
-osc.connect(audioCtx.destination)
-let defaultF = 400
-let f = inputSound.checked ? defaultF : 0
-osc.frequency.value = f
-
-function playSound(value){
-    if(inputSound.checked) osc.frequency.value = f * Math.pow(2, (value / (highestValue-lowestValue) * 1.7)+0.2)
-}
-
-inputSound.onchange = () => {
-    f = inputSound.checked ? defaultF : 0
-    if(!inputSound.checked && isRunning) {
-        osc.stop()
-        osc = audioCtx.createOscillator()
-        osc.connect(audioCtx.destination)
-    }else if(inputSound.checked && isRunning) {
-        osc.start()
-    }
-}
-
-let isRunning = false
-
-let speed = 0.1
 const sortWorker = new Worker('algorithms/main.js')
 sortWorker.onmessage = (e) => {
     if(e.data.cmd === 'update'){
@@ -58,12 +17,122 @@ sortWorker.onmessage = (e) => {
         if(e.data.lastColor != undefined) clearColorForIndex(Math.min(e.data.lastColor,array.length - 1))
         if(e.data.currentColor != undefined) setColor(Math.min(e.data.currentColor,array.length - 1),'red')
     }else if(e.data.cmd === 'sound'){
-        playSound(e.data.value)
+        // console.log(e.data.value)
+        playSound(e.data.value,e.data.osc == 1 ? osc : osc2)
     }
     else{
         console.log('Something is wrong!')
     }
 }
+
+const graph = document.querySelector('div.graph')
+const comparisonsH1 = document.querySelector('h1.comparisons')
+const accessesH1 = document.querySelector('h1.accesses')
+const inputSize = document.querySelector('input[name="arraysize"]')
+const inputMax = document.querySelector('input[name="maxvalue"]')
+const inputBarh = document.querySelector('input[name="barh"]')
+// const inputDelay = document.querySelector('input[name="delay"]')
+const newArrayBtn = document.querySelector('button.newarray')
+const reversedArrayBtn = document.querySelector('button.reversedarray')
+const startBtn = document.querySelector('button.start')
+const type = document.querySelector('select[name="type"]')
+const mode = document.querySelector('select[name="mode"]')
+const inputSound = document.querySelector('input[name="sound"]')
+const inputVolume = document.querySelector('input[name="volume"]')
+// const inputVisualization = document.querySelector('input[name="visu"]')
+// const inputSound = document.querySelector('input[name="sound"]')
+
+
+const audioCtx = new AudioContext()
+const gain = audioCtx.createGain()
+const convolver = audioCtx.createConvolver()
+convolver.buffer = impulse(0.1,10)
+let osc = audioCtx.createOscillator()
+let osc2 = audioCtx.createOscillator()
+// osc.connect(convolver)
+// convolver.connect(audioCtx.destination)
+osc.connect(gain)
+osc2.connect(gain)
+gain.connect(audioCtx.destination)
+
+if(localStorage.getItem('settings') != null){
+    inputVolume.value = JSON.parse(localStorage.getItem('settings')).volume
+}
+
+let volume = inputVolume.value
+gain.gain.value = volume / 100
+inputVolume.oninput = () => {
+    volume = inputVolume.value
+    localStorage.setItem('settings',JSON.stringify({volume: volume}))
+    gain.gain.value = volume / 100
+}
+
+let defaultF = 700
+let f = inputSound.checked ? defaultF : 0
+let minF = 120
+let maxF = 1212
+// let minF = 400
+// let maxF = 900
+osc.frequency.value = f
+osc2.frequency.value = f
+
+
+function impulse(duration,decay,reverse){
+    let sampleRate = audioCtx.sampleRate
+    let length = sampleRate * duration
+    let impulse = audioCtx.createBuffer(2,length,sampleRate)
+    let impulseL = impulse.getChannelData(0)
+    let impulseR = impulse.getChannelData(1)
+    if(!decay) decay = 2.0
+    for(let i = 0; i < length; i++){
+        let n = reverse ? length - i : i
+        impulseL[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay)
+        impulseR[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay)
+    }
+    return impulse
+}
+
+function playSound(value,oscillator){
+    try{
+        oscillator.frequency.value = Math.abs(((maxF-minF) * ((value - lowestValue)/(highestValue - lowestValue))) + minF)
+    }catch(e){
+        
+    }
+    // osc.frequency.value = Math.abs(f * ((value / (highestValue-lowestValue) * 1.7) + 0.2))
+    // if(inputSound.checked) osc.frequency.value = f * (Math.pow(2, ((value / (highestValue-lowestValue) * 1.7)+0.2)))
+    // if(inputSound.checked) osc.frequency.value = f * (Math.pow(2, ((value / (highestValue-lowestValue) * 1.5)+0.2))/10)
+}
+
+function stopSound(oscillator){
+    oscillator.frequency.value = 0
+}
+
+function stopAllSounds(){
+    try{
+        osc.stop()
+        osc = audioCtx.createOscillator()
+        osc.connect(gain)
+        osc2.stop()
+        osc2 = audioCtx.createOscillator()
+        osc2.connect(gain)
+        gain.connect(audioCtx.destination)
+    }catch(e){
+
+    }
+}
+
+inputSound.onchange = () => {
+    f = inputSound.checked ? defaultF : 0
+    if(!inputSound.checked && isRunning) {
+        stopAllSounds()
+    }else if(inputSound.checked && isRunning) {
+        osc.start()
+        osc2.start()
+    }
+}
+
+let isRunning = false
+
 
 let highestValue
 let lowestValue
@@ -127,6 +196,7 @@ function isSorted(arr){
 function startSorting(){
     if(isRunning) return
     if(inputSound.checked) osc.start()
+    if(inputSound.checked) osc2.start()
     isRunning = true
     if(finishAnim) clearInterval(finishAnim)
     startingTime = new Date()
@@ -161,6 +231,7 @@ function finished(){
     let sum = 5
     let lastColors = []
     const redBarSize = 2
+    stopSound(osc2)
     function loop(){
         for(let j = 0; j < sum; j++){
             lastColors = []
@@ -174,16 +245,14 @@ function finished(){
             }
             if(!!bars[i + j - redBarSize]){
                 setColor(i + j - redBarSize,'green')
-                playSound(array[i + j - redBarSize])
+                playSound(array[i + j - redBarSize],osc)
             }
         }
         i = i + sum
         if(i > bars.length) {
             clearInterval(finishAnim)
             clearColorsGreen()
-            osc.stop()
-            osc = audioCtx.createOscillator()
-            osc.connect(audioCtx.destination)
+            stopAllSounds()
         }
     }
     finishAnim = setInterval(loop,0)
@@ -249,6 +318,7 @@ function setColor(i,color){
 
 function randomArray(){
     if(isRunning) return
+    stopAllSounds()
     if(finishAnim) clearInterval(finishAnim)
     array = []
     for(let i = 0; i < arraySize; i++) array.push(Math.floor(Math.random() * maxSize))
@@ -260,6 +330,7 @@ function randomArray(){
 }
 function reversedArray(){
     if(isRunning) return
+    stopAllSounds()
     if(finishAnim) clearInterval(finishAnim)
     array = []
     for(let i = arraySize - 1; i >= 0; i--) array.push(i)
