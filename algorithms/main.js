@@ -9,6 +9,7 @@ const subWorkers = {
     cocktail: new Worker('cocktail.js'),
     comb: new Worker('comb.js'),
     merge: new Worker('merge.js'),
+    heap: new Worker('heap.js'),
 }
 
 for(const [key, value] of Object.entries(subWorkers)){

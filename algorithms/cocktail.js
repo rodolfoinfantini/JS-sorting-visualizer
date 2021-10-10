@@ -3,7 +3,9 @@ let comparisons = 0
 onmessage = (e) => {
     let array = e.data
     let lastColor = 0
+    let lastColor2 = 0
     let lastBackColor = 0
+    let lastBackColor2 = 0
     arrayAccesses++
     for(let loopI = 0; loopI < array.length; loopI++){
         let i = 0
@@ -15,14 +17,19 @@ onmessage = (e) => {
             comparisons++
             postMessage({cmd: 'sound', value: array[i], osc: 1})
             postMessage({cmd: 'sound', value: array[i+1], osc: 2})
+
+            
             if(array[i] > array[i + 1]){
+                postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
+                lastColor = i
+                postMessage({cmd: 'color', lastColor: lastColor2, currentColor: i + 1})
+                lastColor2 = i + 1
                 arrayAccesses++
                 swap(array, i, i + 1)
-                postMessage({cmd: 'color', lastColor: lastColor, currentColor: i + 1})
-                lastColor = i + 1
             }
         }
         postMessage({cmd: 'color', lastColor: lastColor})
+        postMessage({cmd: 'color', lastColor: lastColor2})
         arrayAccesses++
         for(backI = array.length - 1 - loopI; backI >= loopI; backI--){
             arrayAccesses++
@@ -30,13 +37,16 @@ onmessage = (e) => {
             postMessage({cmd: 'sound', value: array[backI], osc: 1})
             postMessage({cmd: 'sound', value: array[backI-1], osc: 2})
             if(array[backI] < array[backI - 1]){
+                postMessage({cmd: 'color', lastColor: lastBackColor, current: backI})
+                lastBackColor = backI
+                postMessage({cmd: 'color', lastColor: lastBackColor2, current: backI - 1})
+                lastBackColor2 = backI - 1
                 swap(array, backI, backI - 1)
                 arrayAccesses++
-                postMessage({cmd: 'color', lastColor: lastBackColor, current: backI - 1})
-                lastBackColor = backI - 1
             }
         }
         postMessage({cmd: 'color', lastColor: lastBackColor})
+        postMessage({cmd: 'color', lastColor: lastBackColor2})
         postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
         if(isSorted(array)) break
     }

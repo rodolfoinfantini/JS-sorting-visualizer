@@ -2,6 +2,8 @@ let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
     let array = e.data
+    let lastColor = 0
+    let lastColor2 = 0
     async function quickSort(arr,start,end){
         if(start >= end) return
         arrayAccesses++
@@ -12,7 +14,7 @@ onmessage = (e) => {
         quickSort(arr,index + 1,end)
     }
     function quickPartition(arr,start,end){
-        let lastColor = 0
+        
         arrayAccesses++
         let pivotValue = arr[end]
         let pivotIndex = start
@@ -21,19 +23,22 @@ onmessage = (e) => {
             comparisons++
             postMessage({cmd: 'sound', value: arr[i], osc: 1})
             postMessage({cmd: 'sound', value: arr[pivotIndex], osc: 2})
+
+            postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
+            lastColor = i
+            postMessage({cmd: 'color', lastColor: lastColor2, currentColor: pivotIndex})
+            lastColor2 = pivotIndex
+
             if(arr[i] < pivotValue){
                 arrayAccesses++
                 swap(arr,i,pivotIndex)
-                postMessage({cmd: 'update', arr: array, lastColor: lastColor, currentColor: i, arrayAccesses: arrayAccesses, comparisons: comparisons})
-                lastColor = i
+                postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
                 pivotIndex++
             }
             
         }
-        postMessage({cmd: 'update', arr: array, lastColor: lastColor, arrayAccesses: arrayAccesses, comparisons: comparisons})
+        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
         arrayAccesses++
-        /* postMessage({cmd: 'sound', value: arr[pivotIndex]})
-        postMessage({cmd: 'sound', value: arr[end]}) */
         swap(arr,pivotIndex,end)
         return pivotIndex
     }
@@ -44,14 +49,4 @@ function swap(arr, i1, i2){
     const temp = arr[i1]
     arr[i1] = arr[i2]
     arr[i2] = temp
-}
-function isSorted(arr){
-    let notSorted = false
-    for(let i = 0; i < arr.length; i++){
-        if(arr[i] > arr[i + 1]) {
-            notSorted = true
-            break
-        }
-    }
-    return !notSorted
 }

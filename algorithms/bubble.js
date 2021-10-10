@@ -3,6 +3,7 @@ let comparisons = 0
 onmessage = (e) => {
     let array = e.data
     let lastColor = 0
+    let lastColor2 = 0
     arrayAccesses++
     for(let loopI = 0; loopI < array.length; loopI++){
         arrayAccesses++
@@ -11,10 +12,12 @@ onmessage = (e) => {
             arrayAccesses++
             postMessage({cmd: 'sound', value: array[i], osc: 1})
             postMessage({cmd: 'sound', value: array[i+1], osc: 2})
+            postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
+            lastColor = i
+            postMessage({cmd: 'color', lastColor: lastColor2, currentColor: i+1})
+            lastColor2 = i+1
             if(array[i] > array[i + 1]){
                 arrayAccesses++
-                postMessage({cmd: 'color', lastColor: lastColor, currentColor: i + 1})
-                lastColor = i + 1
                 swap(array, i, i + 1)
             }
         }

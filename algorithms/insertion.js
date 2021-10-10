@@ -16,16 +16,17 @@ onmessage = (e) => {
                 arrayAccesses++
                 postMessage({cmd: 'sound', value: array[innerI], osc: 1})
                 postMessage({cmd: 'sound', value: array[innerI-1], osc: 2})
+                postMessage({cmd: 'color', lastColor: lastColor, currentColor: innerI})
+                lastColor = innerI
+                postMessage({cmd: 'color', lastColor: lastColor2, currentColor: innerI - 1})
+                lastColor2 = innerI - 1
                 if(array[innerI] < array[innerI - 1]){
                     arrayAccesses++
                     swap(array, innerI, innerI - 1)
-                    postMessage({cmd: 'color', lastColor: lastColor, currentColor: innerI})
-                    lastColor = innerI
                 }
             }
         }
-        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons, lastColor: lastColor2, currentColor: i})
-        lastColor2 = i
+        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
     }
     postMessage({cmd: 'finished', arr: array})
 }

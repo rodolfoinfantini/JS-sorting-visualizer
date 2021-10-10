@@ -14,19 +14,16 @@ onmessage = (e) => {
     postMessage({cmd: 'finished', arr: array})
 }
 function isSorted(arr){
-    let notSorted = false
     for(let i = 0; i < arr.length; i++){
         arrayAccesses++
         comparisons++
         postMessage({cmd: 'sound', value: arr[i], osc: 1})
         postMessage({cmd: 'sound', value: arr[i+1], osc: 2})
-        lastColor = i
         if(arr[i] > arr[i + 1]) {
-            notSorted = true
-            break
+            return false
         }
     }
-    return !notSorted
+    return true
 }
 function swap(arr, i1, i2){
     const temp = arr[i1]

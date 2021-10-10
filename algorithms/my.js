@@ -25,17 +25,21 @@ onmessage = (e) => {
             comparisons++
             postMessage({cmd: 'sound', value: array[i], osc: 1})
             postMessage({cmd: 'sound', value: less.value, osc: 2})
+
+            postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
+            lastColor = i
+
+            postMessage({cmd: 'color', lastColor: lastColor2, currentColor: less.index})
+            lastColor2 = less.index
+
             if(array[i] > less.value){
                 arrayAccesses++
                 less.value = array[i]
                 less.index = i
-                postMessage({cmd: 'color', lastColor: lastColor, currentColor: i})
-                lastColor = i
             }
         }
         bringToFront(less.index)
-        postMessage({cmd: 'update', arr: array, lastColor: lastColor2, currentColor: lastSorted - 1,arrayAccesses: arrayAccesses, comparisons: comparisons})
-        lastColor2 = lastSorted - 1
+        postMessage({cmd: 'update', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})
     }
     postMessage({cmd: 'finished', arr: array})
 }
