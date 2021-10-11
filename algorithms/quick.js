@@ -4,7 +4,9 @@ onmessage = (e) => {
     let array = e.data
     let lastColor = 0
     let lastColor2 = 0
-    async function quickSort(arr,start,end){
+    arrayAccesses = 0
+    comparisons = 0
+    function quickSort(arr,start,end){
         if(start >= end) return
         arrayAccesses++
         arrayAccesses++

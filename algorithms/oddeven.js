@@ -7,6 +7,8 @@ onmessage = (e) => {
     let lastOddColor2 = 0
     let lastEvenColor = 0
     let lastEvenColor2 = 0
+    arrayAccesses = 0
+    comparisons = 0
     while(!isSorted){
         isSorted = true
         arrayAccesses++

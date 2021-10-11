@@ -6,6 +6,8 @@ onmessage = (e) => {
     let swapped = true
     let lastColor = 0
     let lastGapColor = 0
+    arrayAccesses = 0
+    comparisons = 0
     while(gap > 1 || swapped){
         gap = Math.max(Math.floor(gap / 1.3),1)
         swapped = false

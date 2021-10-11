@@ -2,6 +2,8 @@ let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
     let array = e.data
+    arrayAccesses = 0
+    comparisons = 0
     arrayAccesses++
     mergeSort(array,0,array.length - 1)
     postMessage({cmd: 'finished', arr: array, arrayAccesses: arrayAccesses, comparisons: comparisons})

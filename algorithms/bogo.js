@@ -1,6 +1,8 @@
 let arrayAccesses = 0
 let comparisons = 0
 onmessage = (e) => {
+    arrayAccesses = 0
+    comparisons = 0
     let array = e.data
     while(!isSorted(array)){
         arrayAccesses++

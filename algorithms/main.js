@@ -10,6 +10,8 @@ const subWorkers = {
     comb: new Worker('comb.js'),
     merge: new Worker('merge.js'),
     heap: new Worker('heap.js'),
+    radix: new Worker('radix.js'),
+    shell: new Worker('shell.js'),
 }
 
 for(const [key, value] of Object.entries(subWorkers)){

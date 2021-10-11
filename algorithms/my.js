@@ -5,6 +5,8 @@ onmessage = (e) => {
     let lastSorted = 0
     let lastColor = 0
     let lastColor2 = 0
+    arrayAccesses = 0
+    comparisons = 0
     function bringToFront(index){
         arrayAccesses++
         let value = array[index]

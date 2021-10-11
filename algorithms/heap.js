@@ -9,12 +9,15 @@ let lastColor6 = 0
 let lastColor7 = 0
 let lastColor8 = 0
 onmessage = (e) => {
+    arrayAccesses = 0
+    comparisons = 0
     const array = e.data
     heapSort(array)
     postMessage({cmd: 'finished', arr: array})
 }
 
 function heapSort(arr) {
+    arrayAccesses++
     let n = arr.length
     for(let i = Math.floor(n/2)-1; i>= 0; i--) {
         heapify(arr,n,i)
@@ -40,6 +43,8 @@ function heapify(arr,n,i){
     lastColor2 = high
     postMessage({cmd: 'sound', value: arr[left], osc: 1})
     postMessage({cmd: 'sound', value: arr[high], osc: 2})
+    arrayAccesses++
+    comparisons++
     if(left < n && arr[left] > arr[high]){
         high = left
     }
@@ -49,16 +54,19 @@ function heapify(arr,n,i){
     lastColor4 = high
     postMessage({cmd: 'sound', value: arr[right], osc: 1})
     postMessage({cmd: 'sound', value: arr[high], osc: 2})
+    arrayAccesses++
+    comparisons++
     if(right < n && arr[right] > arr[high]){
         high = right
     }
     if(high != i){
+        arrayAccesses++
         swap(arr,i,high)
         postMessage({cmd: 'color', lastColor: lastColor7, currentColor: high})
         lastColor7 = high
         postMessage({cmd: 'color', lastColor: lastColor8, currentColor: i})
         lastColor8 = i
-        postMessage({cmd: 'update', arr: arr})
+        postMessage({cmd: 'update', arr: arr, arrayAccesses: arrayAccesses, comparisons: comparisons})
         heapify(arr,n,high)
     }
 }

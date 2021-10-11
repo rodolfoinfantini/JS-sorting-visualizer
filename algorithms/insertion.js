@@ -4,6 +4,8 @@ onmessage = (e) => {
     let array = e.data
     let lastColor = 0
     let lastColor2 = 0
+    arrayAccesses = 0
+    comparisons = 0
     arrayAccesses++
     for(let i = 1; i < array.length; i++){
         arrayAccesses++

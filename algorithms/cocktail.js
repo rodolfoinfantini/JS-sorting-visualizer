@@ -6,6 +6,8 @@ onmessage = (e) => {
     let lastColor2 = 0
     let lastBackColor = 0
     let lastBackColor2 = 0
+    arrayAccesses = 0
+    comparisons = 0
     arrayAccesses++
     for(let loopI = 0; loopI < array.length; loopI++){
         let i = 0
