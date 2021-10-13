@@ -331,7 +331,9 @@ function reversedArray(){
     stopAllSounds()
     if(finishAnim) clearInterval(finishAnim)
     array = []
-    for(let i = arraySize - 1; i >= 0; i--) array.push(i)
+    for(let i = arraySize - 1; i >= 0; i--) {
+        array.push((i / (arraySize - 1)) * maxSize)
+    }
     graph.innerHTML = ''
     bars = []
     highestValue = getHighestValue(array)
