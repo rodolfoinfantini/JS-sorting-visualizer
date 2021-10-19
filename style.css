@@ -11,12 +11,7 @@ body{
     transform: rotate(-90deg) translateX(-100%);
     transform-origin: top left;
     gap: 0px;
-    pointer-events: none;
     width: 300px;
-    /* position: absolute; */
-    /* bottom: 20px; */
-    /* left: 20px; */
-    /* padding-bottom: 20px; */
     padding: 10px;
     overflow: visible;
 }
@@ -40,6 +35,8 @@ body{
     height: 1px;
 }
 
+
+
 progress{
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -51,6 +48,7 @@ progress{
     outline: none;
     padding: 0;
     overflow: visible;
+    position: relative;
 }
 ::-webkit-progress-bar{
     background-color: transparent;
@@ -72,13 +70,13 @@ body ::-webkit-progress-value{
     background-color: white;
 }
 
-.red{
+body:not(.dots) .red{
     background-color: hsl(0, 100%, 20%)!important;
 }
-.red::-moz-progress-bar{
+body:not(.dots) .red::-moz-progress-bar{
     background-color: hsl(0, 100%, 50%)!important;
 }
-.red::-webkit-progress-value{
+body:not(.dots) .red::-webkit-progress-value{
     background-color: hsl(0, 100%, 50%)!important;
 
 }
@@ -88,4 +86,45 @@ body ::-webkit-progress-value{
 }
 .green::-webkit-progress-value{
     background-color: lime!important;
+}
+
+::-moz-progress-bar::after{
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background-color: red;
+}
+
+body.dots ::-moz-progress-bar{
+    border-right: 2px solid white;
+}
+body.dots .red::-moz-progress-bar{
+    border-right: 2px solid red!important;
+}
+
+
+body.dots ::-moz-progress-bar{
+    background-color: transparent;
+}
+
+body.dots .graph ::-moz-progress-bar {
+    border-right: 3px solid white!important;
+}
+body.dots .graph.small ::-moz-progress-bar {
+    border-right: 2px solid white!important;
+}
+body.dots .graph.smallest ::-moz-progress-bar {
+    border-right: 1px solid white!important;
+}
+body.dots .graph .red::-moz-progress-bar {
+    border-right: 3px solid red!important;
+}
+body.dots .graph.small .red::-moz-progress-bar {
+    border-right: 2px solid red!important;
+}
+body.dots .graph.smallest .red::-moz-progress-bar {
+    border-right: 1px solid red!important;
 }
